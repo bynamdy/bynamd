@@ -1,0 +1,36 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Cloudflare Workers config for the Bynamdy Next.js app (OpenNext adapter).
+  // Docs: DEPLOYMENT-CLOUDFLARE.md
+  "name": "bynamdy",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // 🔌 DATABASE CONNECTION — pick ONE of these two options:
+  //
+  // OPTION A (works immediately, nothing to change):
+  //   Leave the block below commented out. The app connects to Supabase
+  //   directly using the DATABASE_URL environment variable you set on the
+  //   Worker (use the Supabase "Transaction pooler" URI, port 6543).
+  //
+  // OPTION B (recommended once the site is live — faster, pooled):
+  //   1. Cloudflare dashboard → Storage & Databases → Hyperdrive → Create
+  //      (paste the same Supabase transaction-pooler URI).
+  //   2. Copy the Hyperdrive ID and UNCOMMENT the block below, replacing
+  //      YOUR_HYPERDRIVE_ID with it.
+  //   3. Commit + push — the app picks it up automatically.
+  //
+  // "hyperdrive": [
+  //   {
+  //     "binding": "HYPERDRIVE",
+  //     "id": "YOUR_HYPERDRIVE_ID"
+  //   }
+  // ]
+}

@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+// NOTE FOR DEPLOYMENT (Supabase / PostgreSQL):
+// 1. Change the provider line below from "sqlite" to "postgresql"
+//    (or run: npm run db:switch:postgres)
+// 2. Set DATABASE_URL to your Supabase connection string
+// 3. Run: npx prisma generate && npx prisma db push && npx tsx scripts/seed.ts
+// Full guide in DEPLOYMENT.md
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id               String   @id @default(cuid())
+  email            String   @unique
+  passwordHash     String
+  totpSecret       String?
+  twoFactorEnabled Boolean  @default(false)
+  backupCodes      String   @default("[]") // JSON array of SHA-256 hashed codes
+  failedAttempts   Int      @default(0)
+  lockedUntil      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Article {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  category       String   @default("news") // news | updates | releases
+  excerpt        String
+  content        String
+  coverImage     String?
+  seoTitle       String?
+  seoDescription String?
+  published      Boolean  @default(true)
+  views          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model CheatCode {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  gameTitle String
+  platform  String // PC | PlayStation | Xbox | Mobile
+  code      String
+  effect    String
+  details   String?
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wallpaper {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  category  String   @default("Games") // Games | Cars | Abstract | Sci-Fi | Anime
+  imageUrl  String
+  tags      String   @default("")
+  resolution String  @default("3840x2160")
+  downloads Int      @default(0)
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Freebie {
+  id            String    @id @default(cuid())
+  title         String
+  type          String    @default("free") // free | giveaway | deal
+  description   String
+  platform      String    @default("Multi")
+  url           String
+  imageUrl      String?
+  priceOriginal String?
+  priceDeal     String?
+  endsAt        DateTime?
+  active        Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String
+  price        Float
+  oldPrice     Float?
+  currency     String   @default("USD")
+  imageUrl     String?
+  affiliateUrl String
+  category     String   @default("Accessories")
+  brand        String   @default("")
+  featured     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PageContent {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model PageView {
+  id    String @id @default(cuid())
+  day   String // YYYY-MM-DD
+  path  String
+  count Int    @default(0)
+
+  @@unique([day, path])
+}
